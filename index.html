@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- ============================================================
+     PORTFOLIO WORK INDEX — BLANK TEMPLATE
+     Design direction: editorial index list (the way OMA / BIG /
+     Snøhetta-tier studio sites present work) instead of a card grid.
+     The signature move: hover a project name and its thumbnail
+     follows your cursor. Replace every [BRACKET] with real content.
+     ============================================================ -->
+<title>Ibrahim Abu Khaled — Work</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+  /* ============================================================
+     TOKENS
+     Paper: gallery-wall white. Ink: near-black warm charcoal.
+     Accent: bronze — the metal of signage plaques and door
+     hardware on the buildings this work will hang next to.
+     ============================================================ */
+  :root{
+    --paper:      #F7F6F3;
+    --paper-dim:  #EFEDE8;
+    --ink:        #1C1B19;
+    --ink-soft:   #6B6660;
+    --ink-faint:  #A39E96;
+    --line:       rgba(28,27,25,0.13);
+    --bronze:     #8C7355;
+    --bronze-dark:#6E5940;
+
+    --display: 'Fraunces', serif;
+    --ui:      'Public Sans', sans-serif;
+    --mono:    'IBM Plex Mono', monospace;
+    --gutter:  clamp(24px, 5vw, 80px);
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{ margin:0; background:var(--paper); color:var(--ink); font-family:var(--ui); -webkit-font-smoothing:antialiased; }
+  a{ color:inherit; text-decoration:none; } img{ display:block; max-width:100%; }
+  :focus-visible{ outline:2px solid var(--bronze); outline-offset:3px; }
+  @media (prefers-reduced-motion: reduce){ *,*::before,*::after{ transition-duration:0.001ms !important; animation-duration:0.001ms !important; } }
+
+  /* ---------- Nav: quiet, text-only ---------- */
+  header.menu-nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:28px var(--gutter); border-bottom:1px solid var(--line);
+  }
+  .menu-nav .wordmark{ font-family:var(--display); font-weight:500; font-size:16px; letter-spacing:0.01em; }
+  .menu-nav nav{ display:flex; gap:36px; }
+  .menu-nav nav a{ font-family:var(--mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-soft); }
+  .menu-nav nav a:hover{ color:var(--ink); }
+  .menu-nav nav a[aria-current="page"]{ color:var(--ink); border-bottom:1px solid var(--bronze); padding-bottom:3px; }
+
+  /* ---------- Intro: the thesis ---------- */
+  .menu-intro{ padding:88px var(--gutter) 40px; max-width:1400px; margin:0 auto; }
+  .menu-intro .eyebrow{ font-family:var(--mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--bronze); margin:0 0 22px; }
+  .menu-intro h1{
+    font-family:var(--display); font-weight:500; font-optical-sizing:auto;
+    font-size:clamp(52px, 9vw, 140px); line-height:0.92; margin:0; letter-spacing:-0.015em;
+  }
+  .menu-intro .sub{
+    display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap;
+    margin-top:28px; padding-top:24px; border-top:1px solid var(--line);
+  }
+  .menu-intro .sub p{ color:var(--ink-soft); font-size:15px; max-width:52ch; margin:0; line-height:1.6; }
+  .menu-intro .count{ font-family:var(--mono); font-size:12px; color:var(--ink-faint); white-space:nowrap; }
+
+  /* ---------- Filters: inline text, no boxes ---------- */
+  .filter-row{
+    display:flex; align-items:center; gap:28px; flex-wrap:wrap;
+    max-width:1400px; margin:0 auto; padding:20px var(--gutter);
+    border-bottom:1px solid var(--line);
+  }
+  .filter-pills{ display:flex; gap:26px; flex-wrap:wrap; }
+  .filter-pills button{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.05em; text-transform:uppercase;
+    background:none; border:none; color:var(--ink-faint); cursor:pointer; padding:4px 0; position:relative;
+  }
+  .filter-pills button::after{
+    content:""; position:absolute; left:0; bottom:0; width:0; height:1px; background:var(--bronze); transition:width .25s ease;
+  }
+  .filter-pills button:hover{ color:var(--ink); }
+  .filter-pills button.active{ color:var(--ink); }
+  .filter-pills button.active::after{ width:100%; }
+  .search-wrap{ margin-left:auto; display:flex; align-items:center; gap:8px; min-width:180px; }
+  .search-wrap svg{ opacity:0.4; flex-shrink:0; }
+  .search-wrap input{
+    border:none; border-bottom:1px solid var(--line); background:transparent; font-family:var(--mono);
+    font-size:12px; color:var(--ink); padding:4px 0; outline:none; width:100%;
+  }
+  .search-wrap input:focus{ border-color:var(--bronze); }
+  .search-wrap input::placeholder{ color:var(--ink-faint); }
+
+  /* ============================================================
+     THE INDEX — signature layout
+     Rows of project names set in large display serif. Metadata
+     runs in monospace like a drawing schedule. No thumbnails
+     inline — the image only appears as a floating preview that
+     tracks the cursor (see .cursor-preview + JS).
+     ============================================================ */
+  .index-list{ max-width:1400px; margin:0 auto; padding:0 var(--gutter); }
+  .index-row{
+    display:flex; align-items:baseline; gap:28px; padding:30px 0; border-bottom:1px solid var(--line);
+    cursor:pointer; position:relative; background:var(--paper);
+  }
+  .index-row.is-hidden{ display:none; }
+  .index-row.dragging{ opacity:0.35; }
+  .row-handle{
+    display:flex; align-items:center; justify-content:center; width:20px; flex-shrink:0;
+    color:var(--ink-faint); cursor:grab; align-self:center; letter-spacing:2px; font-size:14px;
+    opacity:0; transition:opacity .2s ease; user-select:none;
+  }
+  .index-row:hover .row-handle{ opacity:1; }
+  .row-handle:active{ cursor:grabbing; }
+  @media (hover:none), (pointer:coarse){ .row-handle{ opacity:1; } }
+  .index-row .row-no{ font-family:var(--mono); font-size:13px; color:var(--ink-faint); width:32px; flex-shrink:0; }
+  .index-row .row-name{
+    font-family:var(--display); font-weight:500; font-size:clamp(26px,3.4vw,46px);
+    letter-spacing:-0.01em; transition:color .25s ease, transform .25s ease; flex:1;
+  }
+  .index-row:hover .row-name{ color:var(--bronze-dark); transform:translateX(6px); }
+  .index-row .row-meta{ display:flex; gap:22px; font-family:var(--mono); font-size:12px; color:var(--ink-soft); white-space:nowrap; }
+  .index-row .row-meta .tag{ text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-faint); }
+  .row-upload{
+    font-family:var(--mono); font-size:10px; letter-spacing:0.05em; text-transform:uppercase;
+    background:none; border:1px solid var(--line); color:var(--ink-faint); padding:5px 10px; cursor:pointer;
+    opacity:0; transition:opacity .2s ease, border-color .2s ease, color .2s ease; flex-shrink:0;
+  }
+  .index-row:hover .row-upload{ opacity:1; }
+  .row-upload:hover{ border-color:var(--bronze); color:var(--bronze-dark); }
+  .row-upload.has-image{ opacity:1; border-color:var(--bronze); color:var(--bronze-dark); }
+
+  @media (max-width:700px){
+    .index-row{ flex-wrap:wrap; gap:10px 20px; }
+    .index-row .row-meta{ order:3; width:100%; padding-left:60px; }
+    .row-upload{ opacity:1; }
+  }
+
+  .no-results{ display:none; text-align:center; padding:60px var(--gutter); font-family:var(--mono); font-size:13px; color:var(--ink-faint); }
+  .no-results.show{ display:block; }
+
+  /* ---------- Cursor-following preview (the signature) ---------- */
+  .cursor-preview{
+    position:fixed; top:0; left:0; z-index:500; width:280px; aspect-ratio:4/3;
+    pointer-events:none; opacity:0; transform:translate(-50%,-50%) scale(0.92);
+    transition:opacity .25s ease, transform .25s ease; overflow:hidden;
+    background-color:var(--paper-dim); background-size:cover; background-position:center;
+    box-shadow:0 24px 60px rgba(28,27,25,0.18);
+  }
+  .cursor-preview.show{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+  .cursor-preview .placeholder-tex{
+    position:absolute; inset:0;
+    background-image:
+      repeating-linear-gradient(0deg, var(--tint,#8C7355) 0 1px, transparent 1px 100%),
+      repeating-linear-gradient(90deg, var(--tint,#8C7355) 0 1px, transparent 1px 100%);
+    background-size:20px 20px; background-color:color-mix(in srgb, var(--tint,#8C7355) 12%, var(--paper-dim));
+    display:flex; align-items:center; justify-content:center;
+  }
+  .cursor-preview.has-image .placeholder-tex{ display:none; }
+  .cursor-preview .placeholder-tex span{ font-family:var(--mono); font-size:10px; color:var(--ink-faint); text-transform:uppercase; background:var(--paper); padding:4px 8px; }
+  @media (hover:none), (pointer:coarse){ .cursor-preview{ display:none !important; } }
+
+  /* ---------- Footer ---------- */
+  footer.menu-footer{
+    max-width:1400px; margin:0 auto; padding:64px var(--gutter) 72px;
+    display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap;
+    border-top:1px solid var(--line); margin-top:20px;
+  }
+  .menu-footer .socials{ display:flex; gap:24px; flex-wrap:wrap; }
+  .menu-footer .socials a{ font-family:var(--mono); font-size:11px; letter-spacing:0.05em; text-transform:uppercase; color:var(--ink-soft); }
+  .menu-footer .socials a:hover{ color:var(--bronze-dark); }
+  .menu-footer .email{ font-family:var(--display); font-size:20px; font-weight:500; }
+  .menu-footer .email:hover{ color:var(--bronze-dark); }
+  .menu-footer .sign{ font-family:var(--mono); font-size:11px; color:var(--ink-faint); }
+  /* ---------- About section ---------- */
+  .about-section{ max-width:1400px; margin:0 auto; padding:96px var(--gutter) 40px; border-top:1px solid var(--line); }
+  .about-section .eyebrow{ font-family:var(--mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--bronze); margin:0 0 22px; }
+
+  /* ---------- CV section (merged) ---------- */
+  .cv-section-wrap{ max-width:1400px; margin:0 auto; padding:96px var(--gutter) 80px; border-top:1px solid var(--line); }
+  .cv-section-wrap .eyebrow{ font-family:var(--mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase; color:var(--bronze); margin:0 0 22px; }
+  .cv-actions{ display:flex; gap:10px; margin-bottom:44px; }
+  .btn{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.05em; text-transform:uppercase;
+    border:1px solid var(--ink); padding:10px 18px; cursor:pointer; background:transparent; color:var(--ink);
+    transition:background .2s ease, color .2s ease; text-decoration:none; display:inline-block;
+  }
+  .btn:hover{ background:var(--ink); color:var(--paper); }
+  .btn.primary{ background:var(--bronze); border-color:var(--bronze); color:#fff; }
+  .btn.primary:hover{ background:var(--bronze-dark); border-color:var(--bronze-dark); }
+
+  .cv-block{ margin-bottom:44px; }
+  .cv-block:last-child{ margin-bottom:0; }
+  .cv-block > .label{ font-family:var(--mono); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--bronze-dark); margin:0 0 16px; display:block; }
+  .cv-block > p{ color:var(--ink-soft); font-size:15px; line-height:1.75; max-width:72ch; margin:0; }
+
+  .skills-grid{ display:grid; grid-template-columns:150px 1fr; gap:14px 24px; }
+  .skills-grid .label{ font-family:var(--mono); font-size:11px; letter-spacing:0.05em; text-transform:uppercase; color:var(--bronze-dark); padding-top:2px; }
+  .skills-grid .value{ color:var(--ink-soft); font-size:14.5px; line-height:1.7; }
+  @media (max-width:640px){ .skills-grid{ grid-template-columns:1fr; } .skills-grid .label{ margin-top:14px; } }
+
+  .firm-name{ font-family:var(--display); font-weight:500; font-size:24px; margin:0 0 4px; }
+  .firm-dates{ font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); margin-bottom:24px; display:block; }
+  .exp-entry{ margin-bottom:30px; }
+  .exp-entry:last-child{ margin-bottom:0; }
+  .exp-entry .exp-role{ font-family:var(--display); font-weight:500; font-size:18px; margin:0 0 4px; }
+  .exp-entry .exp-meta{ font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); margin-bottom:10px; }
+  .exp-entry ul{ list-style:none; padding:0; margin:0; }
+  .exp-entry li{ position:relative; padding-left:20px; margin-bottom:7px; font-size:13.5px; color:var(--ink-soft); line-height:1.6; }
+  .exp-entry li::before{ content:"—"; position:absolute; left:0; color:var(--bronze); }
+
+  .cv-columns{ display:grid; grid-template-columns:1fr 1fr; gap:56px; }
+  @media (max-width:820px){ .cv-columns{ grid-template-columns:1fr; } }
+  .edu-entry, .award-entry{ margin-bottom:16px; }
+  .edu-entry .title, .award-entry .title{ font-family:var(--display); font-weight:500; font-size:15px; margin:0 0 3px; }
+  .edu-entry .meta, .award-entry .meta{ font-family:var(--mono); font-size:11px; color:var(--ink-faint); }
+  .additional-row{ display:flex; gap:26px; flex-wrap:wrap; font-family:var(--mono); font-size:12px; color:var(--ink-soft); }
+  .additional-row span b{ color:var(--ink); font-weight:500; }
+
+  @media print{
+    .cv-actions{ display:none !important; }
+    .menu-nav, .filter-row, .marquee, .cursor-preview, .bg-ambient, .intro-screen{ display:none !important; }
+    body{ background:#fff; }
+    .index-row .row-upload{ display:none !important; }
+    a.index-row{ cursor:default; }
+  }
+
+  .about-grid{ display:grid; grid-template-columns:0.8fr 1.2fr; gap:64px; align-items:start; }
+  .about-grid h2{ font-family:var(--display); font-weight:500; font-size:clamp(30px,4.5vw,52px); margin:0 0 24px; letter-spacing:-0.01em; }
+  .about-grid p{ color:var(--ink-soft); font-size:15px; line-height:1.7; margin:0 0 18px; max-width:58ch; }
+  .about-portrait{ aspect-ratio:3/4; background:var(--paper-dim); position:relative; overflow:hidden; }
+  .about-portrait .placeholder-tex{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    background-image:
+      repeating-linear-gradient(0deg, #8C7355 0 1px, transparent 1px 100%),
+      repeating-linear-gradient(90deg, #8C7355 0 1px, transparent 1px 100%);
+    background-size:20px 20px; background-color:color-mix(in srgb, #8C7355 10%, var(--paper-dim));
+  }
+  .about-portrait .placeholder-tex span{ font-family:var(--mono); font-size:11px; color:var(--ink-faint); text-transform:uppercase; background:var(--paper); padding:4px 10px; border:1px solid var(--line); }
+  .about-specs{ margin-top:8px; border-top:1px solid var(--line); }
+  .about-specs .row{ display:grid; grid-template-columns:150px 1fr; gap:20px; padding:14px 0; border-bottom:1px solid var(--line); font-family:var(--mono); font-size:12.5px; }
+  .about-specs .label{ color:var(--bronze-dark); letter-spacing:0.04em; text-transform:uppercase; }
+  .about-specs .value{ color:var(--ink-soft); }
+  .about-list{ list-style:none; padding:0; margin:8px 0 0; }
+  .about-list li{ position:relative; padding-left:20px; margin-bottom:10px; color:var(--ink-soft); font-size:14px; }
+  .about-list li::before{ content:"—"; position:absolute; left:0; color:var(--bronze); }
+  .about-columns{ display:grid; grid-template-columns:1fr 1fr; gap:40px; margin-top:36px; }
+  @media (max-width:820px){ .about-grid{ grid-template-columns:1fr; } .about-columns{ grid-template-columns:1fr; } }
+  /* ---------- Intro / welcome screen ---------- */
+  .intro-screen{
+    position:fixed; inset:0; z-index:2000; background:var(--paper);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    transition:opacity .8s ease; cursor:pointer;
+  }
+  .intro-screen.hide{ opacity:0; pointer-events:none; }
+  .intro-screen .intro-eyebrow{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--bronze); margin-bottom:28px;
+  }
+  .intro-screen .intro-name{
+    position:relative; height:1.3em; display:flex; align-items:center; justify-content:center;
+    overflow:hidden; padding:0 24px;
+  }
+  .intro-screen .intro-name span{
+    font-family:var(--display); font-weight:500; font-size:clamp(30px,6vw,64px);
+    letter-spacing:-0.01em; white-space:nowrap; position:absolute; opacity:0;
+    transform:translateY(16px); transition:opacity .4s ease, transform .4s ease;
+  }
+  .intro-screen .intro-name span.active{ opacity:1; transform:translateY(0); }
+  .intro-screen .intro-name span.leaving{ opacity:0; transform:translateY(-16px); }
+  .intro-progress{ width:220px; height:1px; background:var(--line); margin-top:44px; position:relative; overflow:hidden; }
+  .intro-progress .bar{ position:absolute; left:0; top:0; height:100%; width:0%; background:var(--bronze); transition:width .35s linear; }
+  .intro-skip{ margin-top:20px; font-family:var(--mono); font-size:10.5px; color:var(--ink-faint); letter-spacing:0.06em; text-transform:uppercase; }
+
+  /* ---------- Ambient rotating background ---------- */
+  .bg-ambient{ position:fixed; inset:0; z-index:-1; overflow:hidden; }
+  .bg-layer{
+    position:absolute; inset:-6%; background-size:cover; background-position:center;
+    opacity:0; transition:opacity 2.4s ease; filter:blur(46px) saturate(1.15) brightness(1.04);
+    transform:scale(1.08);
+  }
+  .bg-layer.active{ opacity:0.38; }
+  .bg-tint{ position:absolute; inset:0; background:var(--paper); opacity:0.74; }
+  @media (prefers-reduced-motion: reduce){ .bg-layer{ transition:none; } }
+
+  /* ---------- Nav toolbar / global edit mode ---------- */
+  .nav-tools{ display:flex; align-items:center; gap:10px; }
+  .save-status{ font-family:var(--mono); font-size:10px; color:var(--ink-faint); min-width:60px; }
+  body.edit-mode [data-edit-key]{ outline:1px dashed var(--bronze); outline-offset:3px; cursor:text; border-radius:2px; }
+  body.edit-mode [data-edit-key]:focus{ outline:2px solid var(--bronze); background:rgba(140,115,85,0.07); }
+  body.edit-mode .index-row{ cursor:default; }
+
+  /* ---------- Scrolling project-names marquee ---------- */
+  .marquee{
+    overflow:hidden; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    padding:18px 0; position:relative; background:var(--paper);
+  }
+  .marquee-track{
+    display:flex; width:max-content; align-items:center;
+    animation:marquee-scroll 32s linear infinite;
+  }
+  .marquee-track .m-item{
+    display:flex; align-items:center; gap:36px; padding:0 18px;
+    font-family:var(--display); font-size:clamp(16px,2.2vw,24px); font-weight:500;
+    color:var(--ink-soft); white-space:nowrap;
+  }
+  .marquee-track .m-item .dot{ color:var(--bronze); font-size:9px; }
+  .marquee:hover .marquee-track{ animation-play-state:paused; }
+  @keyframes marquee-scroll{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce){ .marquee-track{ animation:none; } }
+
+</style>
+</head>
+<body>
+
+<div class="bg-ambient" id="bgAmbient">
+  <div class="bg-layer" id="bgLayer1"></div>
+  <div class="bg-layer" id="bgLayer2"></div>
+  <div class="bg-tint"></div>
+</div>
+
+<div class="intro-screen" id="introScreen">
+  <span class="intro-eyebrow">Ibrahim Abu Khaled — Selected Work</span>
+  <div class="intro-name" id="introName"></div>
+  <div class="intro-progress"><div class="bar" id="introBar"></div></div>
+  <span class="intro-skip">Click anywhere to skip</span>
+</div>
+
+
+<header class="menu-nav" id="top">
+  <a href="#top" class="wordmark">Ibrahim Abu Khaled</a>
+  <nav>
+    <a href="#top">Home</a>
+    <a href="#work" aria-current="page">Work</a>
+    <a href="#about">About</a>
+    <a href="#cv">CV</a>
+  </nav>
+  <div class="nav-tools">
+    <span class="save-status" id="saveStatus"></span>
+    <button class="btn" id="editToggle" type="button">Edit</button>
+    <button class="btn" id="exportPdfBtn" type="button">Export PDF</button>
+    <button class="btn" id="exportIndesignBtn" type="button">Export InDesign</button>
+  </div>
+</header>
+
+<div class="marquee" id="marquee">
+  <div class="marquee-track" id="marqueeTrack"></div>
+</div>
+
+<div class="menu-intro" id="work">
+  <div class="eyebrow">Selected Work — Index</div>
+  <h1>Work.</h1>
+  <div class="sub">
+    <p>Design Development and Schematic Design drawing production
+      across institutional, commercial, and residential projects in
+      Jordan, Saudi Arabia, and Iraq — 2023–present.</p>
+    <span class="count" id="rowCount">09 PROJECTS</span>
+  </div>
+</div>
+
+<div class="filter-row">
+  <div class="filter-pills" id="filterPills">
+    <button class="active" data-filter="all">All</button>
+    <button data-filter="tag-1">Institutional</button>
+    <button data-filter="tag-2">Commercial</button>
+    <button data-filter="tag-3">Residential</button>
+    <button data-filter="tag-4">Infrastructure</button>
+    <button data-filter="tag-5">MEP / BIM</button>
+  </div>
+  <div class="search-wrap">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="search" id="indexSearch" placeholder="Search work…">
+  </div>
+  <button class="btn" id="addProjectBtn" type="button">+ Add Project</button>
+</div>
+
+<div class="index-list" id="indexList">
+
+
+  <a class="index-row" data-type="tag-1" data-search="nuclear hospital amman jordan institutional" data-tint="#8C7355" href="projects/project-01.html">
+    <span class="row-handle" draggable="true" title="Drag to reorder">⠿⠿</span>
+    <span class="row-no">01</span>
+    <span class="row-name">Nuclear Hospital</span>
+    <span class="row-meta"><span>Amman, Jordan</span><span class="tag">Institutional</span><span>[Year] · 32,000 m²</span></span>
+    <button class="row-upload" type="button" data-imgslot data-key="row-1">+ Image</button>
+  </a>
+
+  <a class="index-row" data-type="tag-1" data-search="imc college saudi arabia institutional" data-tint="#8C7355" href="projects/project-02.html">
+    <span class="row-handle" draggable="true" title="Drag to reorder">⠿⠿</span>
+    <span class="row-no">02</span>
+    <span class="row-name">IMC College</span>
+    <span class="row-meta"><span>Saudi Arabia</span><span class="tag">Institutional</span><span>[Year] · 70,000 m²</span></span>
+    <button class="row-upload" type="button" data-imgslot data-key="row-2">+ Image</button>
+  </a>
+
+  <a class="index-row" data-type="tag-2" data-search="toyota headquarters amman jordan commercial" data-tint="#6E5940" href="projects/project-03.html">
+    <span class="row-handle" draggable="true" title="Drag to reorder">⠿⠿</span>
+    <span class="row-no">03</span>
+    <span class="row-name">Toyota Headquarters</span>
+    <span class="row-meta"><span>Amman, Jordan</span><span class="tag">Commercial</span><span>[Year] · 7,000 m²</span></span>
+    <button class="row-upload" type="button" data-imgslot data-key="row-3">+ Image</button>
+  </a>
+
+  <a class="index-row" data-type="tag-4" data-search="king abdullah station amman jordan infrastructure bridge" data-tint="#4F5D48" href="projects/project-04.html">
+    <span class="row-handle" draggable="true" title="Drag to reorder">⠿⠿</span>
+    <span class="row-no">04</span>
+    <span class="row-name">King Abdullah Station</span>
+    <span class="row-meta"><span>Amman, Jordan</span><span class="tag">Infrastructure</span><span>[Year] · 20 km</span></span>
+    <button class="row-upload" type="button" data-imgslot data-key="row-4">+ Image</button>
+  </a>
+
+  <a class="index-row" data-type="tag-2" data-search="ayla department aqaba jordan commercial" data-tint="#6E5940" href="projects/project-05.html">
+    <span class="row-handle" draggable="true" title="Drag to reorder">⠿⠿</span>
+    <span class="row-no">05</span>
+    <span class="row-name">Ayla Department</span>
+    <span class="row-meta"><span>Aqaba, Jordan</span><span class="tag">Commercial</span><span>[Year]</span></span>
+    <button class="row-upload" type="button" data-imgslot data-key="row-5">+ Image</button>
+  </a>
+
+  <a class="index-row" data-type="tag-3" data-search="al sader al sadder iraq residential" data-tint="#8C7355" href="projects/project-06.html">
+    <span class="row-handle" draggable="true" title="Drag to reorder">⠿⠿</span>
+    <span class="row-no">06</span>
+    <span class="row-name">Al Sader</span>
+    <span class="row-meta"><span>Al Sadder, Iraq</span><span class="tag">Residential</span><span>[Year] · 32,000 m²</span></span>
+    <button class="row-upload" type="button" data-imgslot data-key="row-6">+ Image</button>
+  </a>
+
+  <a class="index-row" data-type="tag-2" data-search="jepco amman jordan commercial" data-tint="#6E5940" href="projects/project-07.html">
+    <span class="row-handle" draggable="true" title="Drag to reorder">⠿⠿</span>
+    <span class="row-no">07</span>
+    <span class="row-name">JEPCO</span>
+    <span class="row-meta"><span>Amman, Jordan</span><span class="tag">Commercial</span><span>[Year] · 2,000 m²</span></span>
+    <button class="row-upload" type="button" data-imgslot data-key="row-7">+ Image</button>
+  </a>
+
+  <a class="index-row" data-type="tag-5" data-search="osus eye saudi arabia mep bim coordination" data-tint="#4F5D48" href="projects/project-08.html">
+    <span class="row-handle" draggable="true" title="Drag to reorder">⠿⠿</span>
+    <span class="row-no">08</span>
+    <span class="row-name">OSUS EYE</span>
+    <span class="row-meta"><span>Saudi Arabia</span><span class="tag">MEP / BIM</span><span>[Year]</span></span>
+    <button class="row-upload" type="button" data-imgslot data-key="row-8">+ Image</button>
+  </a>
+
+  <a class="index-row" data-type="tag-5" data-search="madaba hospital jordan mep bim coordination" data-tint="#4F5D48" href="projects/project-09.html">
+    <span class="row-handle" draggable="true" title="Drag to reorder">⠿⠿</span>
+    <span class="row-no">09</span>
+    <span class="row-name">Madaba Hospital</span>
+    <span class="row-meta"><span>Madaba, Jordan</span><span class="tag">MEP / BIM</span><span>[Year]</span></span>
+    <button class="row-upload" type="button" data-imgslot data-key="row-9">+ Image</button>
+  </a>
+
+</div>
+<div class="no-results" id="noResults">No projects match your search. Try clearing the filter.</div>
+
+<section class="about-section" id="about">
+  <div class="eyebrow">About</div>
+  <div class="about-grid">
+    <div class="about-portrait">
+      <div class="placeholder-tex" data-imgslot data-key="portrait"><span>Click to upload portrait</span></div>
+    </div>
+    <div>
+      <h2>Design, considered.</h2>
+      <p>Architectural engineer and draughtsman with experience in
+        conceptual design and sustainable building design, contributing
+        to large-scale residential, commercial, and institutional
+        projects across Jordan, Saudi Arabia, and Iraq. Skilled in
+        DD/SD-phase drawing production, BIM coordination, and
+        multidisciplinary clash detection.</p>
+      <p>Currently an Architectural Draughtsman at Arabtech Jardaneh
+        (Aji), Amman — since October 2023. Previously interned at
+        SPACES — Architects, Planners, Engineers (Principal Architect:
+        Mahmoud Saymeh), contributing to the Al Harbi Villa, Tabuk
+        (architecture, landscape, BIM) and a recycling-banks research
+        study for Chemonics International Inc.</p>
+
+      <div class="about-specs">
+        <div class="row"><span class="label">Software</span><span class="value">AutoCAD, Revit, Rhinoceros, 3ds Max, SketchUp, V-Ray, Lumion, Twinmotion, Photoshop, Illustrator, InDesign, Premiere</span></div>
+        <div class="row"><span class="label">Core Skills</span><span class="value">DD/SD drawing production, BIM coordination &amp; clash detection (Navisworks, BIM 360, Revit), area schedules, dimensioning &amp; annotation, signage &amp; ceiling plans</span></div>
+        <div class="row"><span class="label">Languages</span><span class="value">Arabic (native), English (fluent)</span></div>
+        <div class="row"><span class="label">Based in</span><span class="value">Amman, Jordan</span></div>
+      </div>
+
+      <div class="about-columns">
+        <div>
+          <div class="eyebrow" style="margin-bottom:10px;">Education</div>
+          <ul class="about-list">
+            <li>B.Arch — Jordan University of Science and Technology, 2018–2023 (Excellent)</li>
+            <li>Diploma of Engineering of Architecture — Faculty of Engineering Technology, 2016–2018 (Very Good)</li>
+            <li>Certificate — Structural Iron Skilled Level, 2015–2016</li>
+            <li>Certificate — Rafters Carpenters Skilled Level, 2015–2016</li>
+            <li>LEED Green Associate (LEED GA)</li>
+          </ul>
+        </div>
+        <div>
+          <div class="eyebrow" style="margin-bottom:10px;">Awards &amp; Recognition</div>
+          <ul class="about-list">
+            <li>Landscape | Middle East (March 2022) — cover story feature on Irbid</li>
+            <li>JSRI Architecture Competition — 2nd Place, space habitat design</li>
+            <li>Toyota Headquarters Architecture Competition — 2nd Place, Wadi Al-Seer</li>
+            <li>Injaz National Entrepreneurship Competition (EBC) — 3rd Place, Finalist</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cv-section-wrap" id="cv">
+  <div class="eyebrow">CV</div>
+  <div class="cv-actions">
+    <a class="btn primary" href="assets/Ibrahim_AbuKhaled_CV.pdf" download>Download PDF</a>
+    <button class="btn" id="printCvBtn" type="button">Print</button>
+  </div>
+
+  <div class="cv-block">
+    <span class="label">Professional Summary</span>
+    <p>Architectural engineer and draughtsman with experience in conceptual
+      design and sustainable building design, contributing to large-scale
+      residential, commercial, and institutional projects across Jordan,
+      Saudi Arabia, and Iraq. Skilled in DD/SD-phase drawing production,
+      BIM coordination, and multidisciplinary clash detection. Seeking an
+      Architectural Designer position with a forward-thinking firm
+      delivering innovative and sustainable architectural solutions.</p>
+  </div>
+
+  <div class="cv-block">
+    <span class="label">Core Skills</span>
+    <div class="skills-grid">
+      <span class="label">Software</span>
+      <span class="value">AutoCAD, Revit, Rhinoceros, 3ds Max, SketchUp, V-Ray, Lumion, Twinmotion, Photoshop, Illustrator, InDesign, Premiere, Microsoft Word, Microsoft PowerPoint</span>
+      <span class="label">Skills</span>
+      <span class="value">Design Development (DD) and Schematic Design (SD) drawing production, BIM coordination and clash detection (Navisworks, BIM 360, Revit), area schedules and project specifications, dimensioning and annotation, signage and ceiling plans, family and component modeling, cross-department coordination</span>
+      <span class="label">Languages</span>
+      <span class="value">Arabic (native), English (fluent)</span>
+      <span class="label">Soft Skills</span>
+      <span class="value">Creativity, Communication, Management, Teamwork, Team Leadership</span>
+    </div>
+  </div>
+
+  <div class="cv-block">
+    <span class="label">Professional Experience</span>
+    <p class="firm-name">Arabtech Jardaneh (Aji) — Architectural Draughtsman</p>
+    <span class="firm-dates">October 2023 – Present</span>
+
+    <div class="exp-entry">
+      <p class="exp-role">Nuclear Hospital, Amman, Jordan</p>
+      <div class="exp-meta">32,000 m²</div>
+      <ul>
+        <li>Produced high-quality DD-phase drawings including dimensioning, annotation, ceiling plans, tiling, and signage plans</li>
+        <li>Selected finishes and fittings according to applicable country regulations and supplier standards</li>
+        <li>Modeled families and components</li>
+        <li>Coordinated with other relevant departments</li>
+        <li>Created schedules for project specifications and area calculations</li>
+      </ul>
+    </div>
+
+    <div class="exp-entry">
+      <p class="exp-role">IMC College, Saudi Arabia</p>
+      <div class="exp-meta">70,000 m²</div>
+      <ul>
+        <li>Produced high-quality SD- and DD-phase drawings including dimensioning, annotation, ceiling plans, tiling, and signage plans</li>
+        <li>Selected finishes and fittings according to applicable country regulations and supplier standards</li>
+        <li>Modeled families and components</li>
+        <li>Coordinated with other relevant departments</li>
+        <li>Created schedules for project specifications and area calculations</li>
+      </ul>
+    </div>
+
+    <div class="exp-entry">
+      <p class="exp-role">Al Sader, Al Sadder, Iraq</p>
+      <div class="exp-meta">32,000 m²</div>
+      <ul><li>Produced high-quality DD-phase drawings including dimensioning, annotation, ceiling plans, tiling, and signage plans</li></ul>
+    </div>
+
+    <div class="exp-entry">
+      <p class="exp-role">JEPCO, Amman, Jordan</p>
+      <div class="exp-meta">2,000 m²</div>
+      <ul>
+        <li>Produced high-quality DD-phase drawings including dimensioning, annotation, ceiling plans, tiling, and signage plans</li>
+        <li>Selected finishes and fittings according to applicable country regulations and supplier standards</li>
+        <li>Coordinated with other relevant departments</li>
+        <li>Created schedules for project specifications and area calculations</li>
+      </ul>
+    </div>
+
+    <div class="exp-entry">
+      <p class="exp-role">King Abdullah Station, Amman, Jordan</p>
+      <div class="exp-meta">20 km</div>
+      <ul><li>Designed a bridge with a 20 km path and 20 transport stations, including 3D modeling and animation</li></ul>
+    </div>
+
+    <div class="exp-entry">
+      <p class="exp-role">Toyota Headquarters, Amman, Jordan</p>
+      <div class="exp-meta">7,000 m²</div>
+      <ul>
+        <li>Developed concept-stage design, plans, elevations, and sections</li>
+        <li>Produced 2D and 3D modeling and rendering</li>
+      </ul>
+    </div>
+
+    <div class="exp-entry">
+      <p class="exp-role">Ayla Department, Aqaba, Jordan</p>
+      <ul>
+        <li>Produced high-quality DD-phase drawings including dimensioning, annotation, ceiling plans, tiling, and signage plans</li>
+        <li>Selected finishes and fittings according to applicable country regulations and supplier standards</li>
+        <li>Coordinated with other relevant departments</li>
+        <li>Created schedules for project specifications and area calculations</li>
+      </ul>
+    </div>
+
+    <div class="exp-entry">
+      <p class="exp-role">OSUS EYE, Saudi Arabia</p>
+      <ul>
+        <li>Coordinated vertical shafts for HVAC, electrical, plumbing, and fire services</li>
+        <li>Aligned shaft positions with architectural cores (stairs, elevators, service zones)</li>
+        <li>Synchronized building entries/exits with landscape pathways and plaza designs</li>
+        <li>Coordinated Finished Floor Levels (FFL) with site grading and landscape slopes</li>
+        <li>Used BIM clash detection tools (Navisworks, BIM 360, Revit) — hard clashes, soft clashes, and warnings</li>
+        <li>Worked with the LEED team on sustainability certification requirements</li>
+      </ul>
+    </div>
+
+    <div class="exp-entry">
+      <p class="exp-role">Madaba Hospital, Jordan</p>
+      <ul>
+        <li>Coordinated vertical shafts for HVAC, electrical, plumbing, and fire services</li>
+        <li>Ensured vehicular drop-offs, fire truck access, and service routes matched both disciplines</li>
+        <li>Aligned ramp gradients and stairs between outdoor and indoor levels</li>
+        <li>Used BIM clash detection tools (Navisworks, BIM 360, Revit) — hard clashes, soft clashes, and warnings</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cv-block">
+    <span class="label">Internships</span>
+    <div class="exp-entry">
+      <p class="exp-role">SPACES — Architects, Planners, Engineers</p>
+      <div class="exp-meta">Principal Architect / Founder: Mahmoud Saymeh</div>
+      <ul>
+        <li>Participated in Al Harbi Villa, Tabuk (Architecture, Landscape, BIM)</li>
+        <li>Participated in Chemonics International Inc., Recycling-Banks (Research, Case Study, Function)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cv-block cv-columns">
+    <div>
+      <span class="label">Education</span>
+      <div class="edu-entry"><p class="title">Bachelor of Architecture</p><span class="meta">Jordan University of Science and Technology · 2018–2023 · GPA: Excellent</span></div>
+      <div class="edu-entry"><p class="title">Diploma of Engineering of Architecture</p><span class="meta">Faculty of Engineering Technology · 2016–2018 · GPA: Very Good</span></div>
+      <div class="edu-entry"><p class="title">Certificate — Structural Iron Skilled Level</p><span class="meta">2015–2016</span></div>
+      <div class="edu-entry"><p class="title">Certificate — Rafters Carpenters Skilled Level</p><span class="meta">2015–2016</span></div>
+      <div class="edu-entry"><p class="title">LEED Green Associate (LEED GA)</p><span class="meta">U.S. Green Building Council</span></div>
+    </div>
+    <div>
+      <span class="label">Awards &amp; Recognition</span>
+      <div class="award-entry"><p class="title">Landscape | Middle East</p><span class="meta">March 2022 — Cover story feature on Irbid</span></div>
+      <div class="award-entry"><p class="title">JSRI Architecture Competition</p><span class="meta">2nd Place — space habitat design</span></div>
+      <div class="award-entry"><p class="title">Injaz National Entrepreneurship Competition (EBC)</p><span class="meta">3rd Place, Finalist</span></div>
+      <div class="award-entry"><p class="title">Toyota Headquarters Architecture Competition</p><span class="meta">2nd Place — Wadi Al-Seer</span></div>
+    </div>
+  </div>
+
+  <div class="cv-block">
+    <span class="label">Additional Information</span>
+    <div class="additional-row">
+      <span><b>Nationality</b> — Jordanian</span>
+      <span><b>Date of Birth</b> — June 10, 1997</span>
+      <span><b>Marital Status</b> — Single</span>
+      <span><b>Based in</b> — Amman, Jordan</span>
+    </div>
+  </div>
+</section>
+
+<footer class="menu-footer">
+  <div class="socials">
+    <a href="https://linkedin.com/in/ibrahim-abukhaled97" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="tel:+962787061812">+962 78 706 1812</a>
+  </div>
+  <a class="email" href="mailto:ibrahimabukhaled97@gmail.com">ibrahimabukhaled97@gmail.com</a>
+  <span class="sign">© 2026 — Ibrahim Abu Khaled</span>
+</footer>
+
+<div class="cursor-preview" id="cursorPreview">
+  <div class="placeholder-tex"><span>Preview</span></div>
+</div>
+
+<script>
+  const STORAGE_PREFIX = 'work-index:' + location.pathname + ':';
+  const indexList = document.getElementById('indexList');
+  let editMode = false;
+
+  // ================= EDIT MODE (global text editing) =================
+  function wireEditable(el, key){
+    el.dataset.editKey = key;
+    const saved = localStorage.getItem(STORAGE_PREFIX + 'text:' + key);
+    if(saved !== null) el.innerHTML = saved;
+  }
+
+  // Static content blocks (About / CV / intro) — each becomes one editable region
+  const staticSelector = '.menu-intro h1, .menu-intro .sub p, .about-grid h2, .about-grid > div > p, .about-specs .value, .about-columns > div, .cv-block > p, .skills-grid, .firm-name, .firm-dates, .exp-entry, .edu-entry, .award-entry, .additional-row';
+  document.querySelectorAll(staticSelector).forEach((el, i)=> wireEditable(el, 'static-' + i));
+
+  // Row name/meta — keyed by the row's own stable upload key, so edits survive reordering
+  function wireRow(row){
+    const rowKey = row.querySelector('[data-imgslot]')?.dataset.key;
+    if(!rowKey) return;
+    const nameEl = row.querySelector('.row-name');
+    const metaEl = row.querySelector('.row-meta');
+    if(nameEl) wireEditable(nameEl, 'row:' + rowKey + ':name');
+    if(metaEl) wireEditable(metaEl, 'row:' + rowKey + ':meta');
+  }
+  document.querySelectorAll('.index-row').forEach(wireRow);
+
+  // Single delegated autosave listener covers every editable element, present or future
+  document.addEventListener('input', (e)=>{
+    const el = e.target.closest('[data-edit-key]');
+    if(!el) return;
+    localStorage.setItem(STORAGE_PREFIX + 'text:' + el.dataset.editKey, el.innerHTML);
+    const st = document.getElementById('saveStatus');
+    st.textContent = 'Saved ✓';
+    clearTimeout(el._t);
+    el._t = setTimeout(()=>{ st.textContent = ''; }, 1200);
+    if(el.classList.contains('row-name') && typeof renderMarquee === 'function') renderMarquee();
+  });
+
+  const editToggle = document.getElementById('editToggle');
+  editToggle.addEventListener('click', ()=>{
+    editMode = !editMode;
+    document.body.classList.toggle('edit-mode', editMode);
+    editToggle.classList.toggle('active', editMode);
+    editToggle.textContent = editMode ? 'Done' : 'Edit';
+    document.querySelectorAll('[data-edit-key]').forEach(el=>{
+      el.setAttribute('contenteditable', editMode ? 'true' : 'false');
+    });
+  });
+
+  // ================= IMAGE UPLOAD (delegated — works for future rows too) =================
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file'; fileInput.accept = 'image/*'; fileInput.style.display = 'none';
+  document.body.appendChild(fileInput);
+  let activeSlot = null;
+
+  document.querySelectorAll('[data-imgslot]').forEach(el=>{
+    const saved = localStorage.getItem(STORAGE_PREFIX + el.dataset.key);
+    if(saved){
+      if(el.classList.contains('row-upload')){
+        el.classList.add('has-image'); el.textContent = 'Image ✓';
+      } else {
+        el.style.backgroundImage = `url(${saved})`; el.classList.add('has-image');
+      }
+    }
+  });
+
+  fileInput.addEventListener('change', ()=>{
+    const file = fileInput.files[0];
+    if(!file || !activeSlot) return;
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      try{
+        localStorage.setItem(STORAGE_PREFIX + activeSlot.dataset.key, e.target.result);
+        if(activeSlot.classList.contains('row-upload')){
+          activeSlot.classList.add('has-image');
+          activeSlot.textContent = 'Image ✓';
+        } else {
+          activeSlot.style.backgroundImage = `url(${e.target.result})`;
+          activeSlot.classList.add('has-image');
+        }
+      }catch(err){ alert('Image too large to save locally — try a smaller file.'); }
+    };
+    reader.readAsDataURL(file);
+    fileInput.value = '';
+  });
+
+  // ================= DELEGATED CLICKS (upload / handle / nav-guard) =================
+  document.addEventListener('click', (e)=>{
+    const slot = e.target.closest('[data-imgslot]');
+    if(slot){
+      e.preventDefault(); e.stopPropagation();
+      activeSlot = slot;
+      fileInput.click();
+      return;
+    }
+    const handle = e.target.closest('.row-handle');
+    if(handle){ e.preventDefault(); return; }
+    if(editMode){
+      const link = e.target.closest('a.index-row');
+      if(link) e.preventDefault();
+    }
+  });
+
+  // ================= FILTER + SEARCH (re-queries rows live) =================
+  const search = document.getElementById('indexSearch');
+  const pills = document.querySelectorAll('#filterPills button');
+  const noResults = document.getElementById('noResults');
+  const rowCount = document.getElementById('rowCount');
+  let activeTag = 'all';
+
+  function applyFilters(){
+    const q = search.value.trim().toLowerCase();
+    const rows = document.querySelectorAll('.index-row');
+    let visible = 0;
+    rows.forEach(row=>{
+      const matchesTag = activeTag === 'all' || row.dataset.type === activeTag;
+      const text = row.innerText.toLowerCase();
+      const matchesSearch = !q || text.includes(q);
+      const show = matchesTag && matchesSearch;
+      row.classList.toggle('is-hidden', !show);
+      if(show) visible++;
+    });
+    noResults.classList.toggle('show', visible === 0);
+    rowCount.textContent = String(visible).padStart(2,'0') + (visible === 1 ? ' PROJECT' : ' PROJECTS');
+  }
+  search.addEventListener('input', applyFilters);
+  pills.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      pills.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      activeTag = btn.dataset.filter;
+      applyFilters();
+    });
+  });
+
+  // ================= CURSOR-FOLLOWING PREVIEW (delegated) =================
+  const preview = document.getElementById('cursorPreview');
+  const isTouch = window.matchMedia('(hover: none), (pointer: coarse)').matches;
+
+  if(!isTouch){
+    window.addEventListener('mousemove', (e)=>{
+      preview.style.left = e.clientX + 'px';
+      preview.style.top = e.clientY + 'px';
+    });
+    indexList.addEventListener('mouseover', (e)=>{
+      const row = e.target.closest('.index-row');
+      if(!row) return;
+      preview.classList.add('show');
+      preview.style.setProperty('--tint', row.dataset.tint || '#8C7355');
+      const key = row.querySelector('[data-imgslot]')?.dataset.key;
+      const saved = key ? localStorage.getItem(STORAGE_PREFIX + key) : null;
+      if(saved){ preview.style.backgroundImage = `url(${saved})`; preview.classList.add('has-image'); }
+      else { preview.style.backgroundImage = 'none'; preview.classList.remove('has-image'); }
+    });
+    indexList.addEventListener('mouseout', (e)=>{
+      const row = e.target.closest('.index-row');
+      if(!row) return;
+      if(row.contains(e.relatedTarget)) return;
+      preview.classList.remove('show');
+    });
+  }
+
+  // ================= DRAG-TO-REORDER (delegated) =================
+  let dragEl = null;
+
+  function renumberRows(){
+    document.querySelectorAll('.index-row').forEach((row, i)=>{
+      row.querySelector('.row-no').textContent = String(i + 1).padStart(2, '0');
+    });
+  }
+  function currentOrderKeys(){
+    return [...document.querySelectorAll('.index-row')].map(row=>{
+      const btn = row.querySelector('[data-imgslot]');
+      return btn ? btn.dataset.key : '';
+    });
+  }
+  function saveOrder(){
+    localStorage.setItem(STORAGE_PREFIX + 'row-order', JSON.stringify(currentOrderKeys()));
+  }
+  function restoreOrder(){
+    const saved = localStorage.getItem(STORAGE_PREFIX + 'row-order');
+    if(!saved) return;
+    try{
+      const order = JSON.parse(saved);
+      order.forEach(key=>{
+        const btn = document.querySelector(`[data-imgslot][data-key="${key}"]`);
+        const row = btn ? btn.closest('.index-row') : null;
+        if(row) indexList.appendChild(row);
+      });
+      renumberRows();
+    }catch(e){ /* ignore malformed saved order */ }
+  }
+  function getRowAfterPointer(container, y){
+    const rows = [...container.querySelectorAll('.index-row:not(.dragging)')];
+    return rows.reduce((closest, row)=>{
+      const box = row.getBoundingClientRect();
+      const offset = y - box.top - box.height / 2;
+      if(offset < 0 && offset > closest.offset){ return { offset, element: row }; }
+      return closest;
+    }, { offset: -Infinity, element: null }).element;
+  }
+
+  indexList.addEventListener('dragstart', (e)=>{
+    const handle = e.target.closest('.row-handle');
+    if(!handle) return;
+    dragEl = handle.closest('.index-row');
+    dragEl.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', '');
+  });
+  indexList.addEventListener('dragend', (e)=>{
+    const handle = e.target.closest('.row-handle');
+    if(!handle) return;
+    if(dragEl) dragEl.classList.remove('dragging');
+    dragEl = null;
+    renumberRows();
+    saveOrder();
+  });
+  indexList.addEventListener('dragover', (e)=>{
+    if(!dragEl) return;
+    e.preventDefault();
+    const after = getRowAfterPointer(indexList, e.clientY);
+    if(after == null){ indexList.appendChild(dragEl); }
+    else if(after !== dragEl){ indexList.insertBefore(dragEl, after); }
+  });
+
+  // ================= ADD PROJECT =================
+  function nextRowId(){
+    const nums = [...document.querySelectorAll('.index-row [data-imgslot]')].map(b=>{
+      const m = b.dataset.key.match(/row-(\d+)/); return m ? parseInt(m[1], 10) : 0;
+    });
+    return (nums.length ? Math.max(...nums) : 0) + 1;
+  }
+  function getCustomRows(){
+    try{ return JSON.parse(localStorage.getItem(STORAGE_PREFIX + 'custom-rows') || '[]'); }
+    catch(e){ return []; }
+  }
+  function saveCustomRows(list){
+    localStorage.setItem(STORAGE_PREFIX + 'custom-rows', JSON.stringify(list));
+  }
+  const TINTS = ['#8C7355', '#6E5940', '#4F5D48'];
+
+  function createRowFromData(data){
+    const row = document.createElement('a');
+    row.className = 'index-row';
+    row.dataset.type = data.type;
+    row.dataset.tint = data.tint;
+    row.href = 'projects/project-template.html?id=' + data.n;
+    row.innerHTML = `
+      <span class="row-handle" draggable="true" title="Drag to reorder">⠿⠿</span>
+      <span class="row-no">00</span>
+      <span class="row-name">New Project</span>
+      <span class="row-meta"><span>City, Country</span><span class="tag">Type</span><span>Year</span></span>
+      <button class="row-upload" type="button" data-imgslot data-key="row-${data.n}">+ Image</button>
+    `;
+    indexList.appendChild(row);
+    wireRow(row);
+    const slot = row.querySelector('[data-imgslot]');
+    const saved = localStorage.getItem(STORAGE_PREFIX + slot.dataset.key);
+    if(saved){ slot.classList.add('has-image'); slot.textContent = 'Image ✓'; }
+    return row;
+  }
+
+  document.getElementById('addProjectBtn').addEventListener('click', ()=>{
+    const n = nextRowId();
+    const data = { n, type: 'tag-1', tint: TINTS[(n - 10) % TINTS.length] || '#8C7355' };
+    const list = getCustomRows();
+    list.push(data);
+    saveCustomRows(list);
+    const row = createRowFromData(data);
+    renumberRows();
+    applyFilters();
+    if(typeof renderMarquee === 'function') renderMarquee();
+    if(!editMode) editToggle.click();
+    const nameEl = row.querySelector('.row-name');
+    nameEl.focus();
+    document.getSelection().selectAllChildren(nameEl);
+  });
+
+  // Restore any previously added custom rows
+  getCustomRows().forEach(createRowFromData);
+
+  restoreOrder();
+  applyFilters();
+
+  // ================= SCROLLING MARQUEE (project names) =================
+  function renderMarquee(){
+    const track = document.getElementById('marqueeTrack');
+    const names = [...document.querySelectorAll('.index-row .row-name')].map(el => el.textContent.trim());
+    if(names.length === 0){ document.getElementById('marquee').remove(); return; }
+    // duplicate the list twice back-to-back so the -50% loop is seamless
+    const loopNames = [...names, ...names];
+    track.innerHTML = loopNames.map(n =>
+      `<span class="m-item">${n}<span class="dot">●</span></span>`
+    ).join('');
+  }
+  renderMarquee();
+
+  // ================= AMBIENT ROTATING BACKGROUND =================
+  (function(){
+    const bgLayers = [document.getElementById('bgLayer1'), document.getElementById('bgLayer2')];
+    let bgActiveLayer = 0;
+    let bgImages = [];
+    let bgIndex = -1;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function refreshBgImages(){
+      bgImages = [...document.querySelectorAll('.row-upload[data-imgslot]')]
+        .map(btn => localStorage.getItem(STORAGE_PREFIX + btn.dataset.key))
+        .filter(Boolean);
+    }
+
+    function cycleBg(){
+      refreshBgImages();
+      if(bgImages.length === 0) return;
+      bgIndex = (bgIndex + 1) % bgImages.length;
+      const next = bgLayers[1 - bgActiveLayer];
+      const cur = bgLayers[bgActiveLayer];
+      next.style.backgroundImage = `url(${bgImages[bgIndex]})`;
+      next.classList.add('active');
+      cur.classList.remove('active');
+      bgActiveLayer = 1 - bgActiveLayer;
+    }
+
+    refreshBgImages();
+    if(bgImages.length){
+      bgIndex = 0;
+      bgLayers[0].style.backgroundImage = `url(${bgImages[0]})`;
+      bgLayers[0].classList.add('active');
+    }
+    if(!prefersReduced) setInterval(cycleBg, 7000);
+  })();
+
+  // ================= CV PRINT BUTTON =================
+  const printCvBtn = document.getElementById('printCvBtn');
+  if(printCvBtn) printCvBtn.addEventListener('click', ()=> window.print());
+
+  // ================= EXPORT PDF (whole site) =================
+  document.getElementById('exportPdfBtn').addEventListener('click', ()=>{
+    if(editMode) editToggle.click();
+    window.print();
+  });
+
+  // ================= EXPORT INDESIGN (XML for File > Import XML) =================
+  document.getElementById('exportIndesignBtn').addEventListener('click', ()=>{
+    function esc(s){ return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    const projectsXml = [...document.querySelectorAll('.index-row')].map(row=>{
+      const title = row.querySelector('.row-name')?.innerText.trim() || '';
+      const metaSpans = [...row.querySelectorAll('.row-meta > span')].map(s=>s.innerText.trim());
+      return `  <Project>
+    <Title>${esc(title)}</Title>
+    <Location>${esc(metaSpans[0] || '')}</Location>
+    <Type>${esc(metaSpans[1] || '')}</Type>
+    <Year>${esc(metaSpans[2] || '')}</Year>
+  </Project>`;
+    }).join('\n');
+
+    const aboutText = [...document.querySelectorAll('.about-grid > div > p')].map(p=>esc(p.innerText.trim()));
+    const summaryText = esc(document.querySelector('.cv-block > p')?.innerText.trim() || '');
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<Portfolio>
+  <Name>Ibrahim Abu Khaled</Name>
+  <Role>Architectural Designer &amp; Architectural Draughtsman</Role>
+  <About>
+    <Paragraph>${aboutText[0] || ''}</Paragraph>
+    <Paragraph>${aboutText[1] || ''}</Paragraph>
+  </About>
+  <CVSummary>${summaryText}</CVSummary>
+  <Projects>
+${projectsXml}
+  </Projects>
+</Portfolio>`;
+
+    const blob = new Blob([xml], { type: 'application/xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'portfolio-indesign.xml';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  // ================= INTRO / WELCOME SCREEN =================
+  (function(){
+    const introScreen = document.getElementById('introScreen');
+    const nameWrap = document.getElementById('introName');
+    const bar = document.getElementById('introBar');
+
+    if(sessionStorage.getItem('introShown') || window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+      introScreen.remove();
+      return;
+    }
+
+    const names = [...document.querySelectorAll('.index-row .row-name')].map(el => el.textContent.trim());
+    if(names.length === 0){ introScreen.remove(); return; }
+
+    document.body.style.overflow = 'hidden';
+    let i = 0;
+    const stepMs = 420;
+    let currentSpan = null;
+
+    function showNext(){
+      if(currentSpan){
+        currentSpan.classList.remove('active');
+        currentSpan.classList.add('leaving');
+        setTimeout(()=>currentSpan && currentSpan.remove(), 420);
+      }
+      const span = document.createElement('span');
+      span.textContent = names[i];
+      nameWrap.appendChild(span);
+      requestAnimationFrame(()=> span.classList.add('active'));
+      currentSpan = span;
+      bar.style.width = (((i + 1) / names.length) * 100) + '%';
+      i++;
+    }
+
+    showNext();
+    const timer = setInterval(()=>{
+      if(i >= names.length){
+        clearInterval(timer);
+        setTimeout(finishIntro, 500);
+        return;
+      }
+      showNext();
+    }, stepMs);
+
+    function finishIntro(){
+      introScreen.classList.add('hide');
+      document.body.style.overflow = '';
+      sessionStorage.setItem('introShown', '1');
+      setTimeout(()=> introScreen.remove(), 800);
+    }
+
+    introScreen.addEventListener('click', ()=>{
+      clearInterval(timer);
+      finishIntro();
+    });
+    window.addEventListener('keydown', function skipOnce(){
+      clearInterval(timer);
+      finishIntro();
+      window.removeEventListener('keydown', skipOnce);
+    });
+  })();
+</script>
+
+</body>
+</html>
